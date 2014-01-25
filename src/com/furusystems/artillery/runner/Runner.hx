@@ -9,9 +9,10 @@ import com.furusystems.flywheel.metrics.Time;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
 import flash.text.TextField;
 import flash.text.TextFormat;
-import haxe.Timer;
+import flash.utils.Timer;
 
 /**
  * ...
@@ -27,10 +28,19 @@ class Runner extends Sprite
 	var runningBarrage:RunningBarrage;
 	var playerPos:Vector2D;
 	var editor:Editor;
+	var loopTimer:Timer;
 	public var console:TextField;
 	public function new() 
 	{
 		super();
+		addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+	}
+	
+	private function onAddedToStage(e:Event):Void 
+	{
+		removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+		
+		tabChildren = tabEnabled = false;
 		bounds = new Rectangle(0, 0, 500, 500);
 		emitter = new Emitter();
 		emitter.pos.x = 250;
@@ -38,13 +48,16 @@ class Runner extends Sprite
 		emitter.playerPos = playerPos = new Vector2D();
 		renderer = new Renderer(cast bounds.width, cast bounds.height);
 		addChild(renderer);
-		renderer.addEventListener(MouseEvent.MOUSE_MOVE, onRendererMouseMove);
+		renderer.addEventListener(MouseEvent.MOUSE_DOWN, onRendererMouseDown);
 		stats = new Label("", 100, 100, false);
 		addChild(stats);
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		
 		editor = new Editor(this);
 		addChild(editor).x = 500;
+		
+		loopTimer = new Timer(5000);
+		loopTimer.addEventListener(TimerEvent.TIMER, onTimerTick);
 		
 		console = new TextField();
 		addChild(console).y = 500;
@@ -60,37 +73,34 @@ class Runner extends Sprite
 		t = new Time();
 	}
 	
+	
 	public function logLine(str:String):Void {
 		console.appendText("\n" + str);
 		console.scrollV = console.maxScrollV;
 	}
 	
-	private function onRendererMouseMove(e:MouseEvent):Void 
+	private function onRendererMouseDown(e:MouseEvent):Void 
 	{
-		//playerPos.setTo(renderer.mouseX, renderer.mouseY);
+		playerPos.setTo(renderer.mouseX, renderer.mouseY);
 	}
 	
 	public function stop():Void {
-		
+		if (runningBarrage != null) runningBarrage.dispose();
+		loopTimer.stop();
 	}
 	
 	public function setBarrage(b:Barrage):Void {
-		if (runningBarrage != null) runningBarrage.dispose();
-		if (b == null) {
-			runningBarrage = null;
-			stop();
-			return;
-		}
+		stop();
+		if (b == null) return;
 		runningBarrage = b.run(emitter);
-		Timer.delay(replay, 4000);
 		runningBarrage.start();
+		loopTimer.start();
 	}
 	
-	function replay() 
+	private function onTimerTick(e:TimerEvent):Void 
 	{
 		if (runningBarrage != null) {
 			runningBarrage.start();
-			Timer.delay(replay, 4000);
 		}
 	}
 	

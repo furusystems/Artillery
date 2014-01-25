@@ -37,9 +37,7 @@ class Emitter implements IBulletEmitter
 	
 	public function emit(origin:Vector2D, angle:Float, speed:Float, acceleration:Float):IBullet {
 		//trace("Emit from " + origin+" to "+angleRad);
-		#if debug
-		trace("Emit " + angle + " " + speed + " " + acceleration);
-		#end
+		//trace("Emit " + angle + " " + speed + " " + acceleration);
 		var angleRad = MathUtils.degToRad(angle);
 		var b = nextBullet;
 		b.pos.copyFrom(origin);
@@ -47,6 +45,7 @@ class Emitter implements IBulletEmitter
 		b.velocity.setTo(Math.cos(angleRad) * speed, Math.sin(angleRad) * speed);
 		b.acceleration = acceleration;
 		activeBullets.push(b);
+		//trace("Emit: " + b.id);
 		return b;
 	}
 	public inline function update(delta:Float, bounds:Rectangle):Void {
@@ -63,8 +62,12 @@ class Emitter implements IBulletEmitter
 	}
 	
 	inline function updateBullet(b:IBullet, delta:Float):Void {
-		b.velocity += b.acceleration * delta;
-		b.pos += b.velocity * delta;
+		var rad:Float = MathUtils.degToRad(b.angle);
+		b.speed += b.acceleration * delta;
+		b.velocity.x = Math.cos(rad) * b.speed;
+		b.velocity.y = Math.sin(rad) * b.speed;
+		b.pos.x += b.velocity.x * delta;
+		b.pos.y += b.velocity.y * delta;
 	}
 	
 	/* INTERFACE com.furusystems.barrage.instancing.IBulletEmitter */
@@ -81,6 +84,7 @@ class Emitter implements IBulletEmitter
 	
 	public function kill(bullet:IBullet):Void 
 	{
+		//trace("Kill " + bullet.id);
 		bullet.active = false;
 		activeBullets.remove(bullet);
 	}
