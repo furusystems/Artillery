@@ -16,6 +16,7 @@ import flash.text.TextFieldType;
 import flash.text.TextFormat;
 import flash.text.TextInteractionMode;
 import flash.ui.Keyboard;
+import hscript.Macro;
 
 /**
  * ...
@@ -32,6 +33,7 @@ class Editor extends Sprite
 	var normal:TextFormat;
 
 	static var storage:SharedObject = SharedObject.getLocal("artillerysave");
+	var clearButton:Button;
 	
 	public function new(runner:Runner) 
 	{
@@ -65,6 +67,15 @@ class Editor extends Sprite
 		addChild(runButton).x = 500 - 90;
 		addChild(runButton).y = 500 - 40;
 		runButton.onPress.add(onRunButton);
+		
+		clearButton = new Button("Reset", 80, 20);
+		addChild(clearButton).x = 500 - 90 - runButton.width;
+		addChild(clearButton).y = 500 - 40;
+		clearButton.onPress.add(onClearButton);
+	}
+	
+	private function onClearButton(b) {
+		runner.reset();
 	}
 	
 	public function cleanScript(str:String):String {
@@ -91,6 +102,7 @@ class Editor extends Sprite
 			var brg = Barrage.fromString(inputField.text);
 			runner.setBarrage(brg);
 			storage.data.brg = inputField.text;
+			runner.logLine("Build complete");
 		}catch (e:ParseError) {
 			runner.setBarrage(null);
 			runner.logLine(e + "");

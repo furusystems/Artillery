@@ -14,7 +14,6 @@ class Bullet implements IBullet
 	public var speed:Float;
 	public var active:Bool;
 	public var id:Int;
-	public var angleRad:Float;
 	public var angle:Float;
 	public function new(id:Int) 
 	{

@@ -31,7 +31,7 @@ class Emitter implements IBulletEmitter
 	var nextBullet(get, never):Bullet;
 	inline function get_nextBullet():Bullet {
 		numActive++;
-		if (numActive > bulletPool.length) numActive = 0;
+		if (numActive > bulletPool.length-1) numActive = 0;
 		return bulletPool[numActive];
 	}
 	
@@ -41,13 +41,20 @@ class Emitter implements IBulletEmitter
 		var angleRad = MathUtils.degToRad(angle);
 		var b = nextBullet;
 		b.pos.copyFrom(origin);
-		b.angleRad = angleRad;
+		b.angle = angle;
 		b.velocity.setTo(Math.cos(angleRad) * speed, Math.sin(angleRad) * speed);
 		b.acceleration = acceleration;
 		activeBullets.push(b);
 		//trace("Emit: " + b.id);
 		return b;
 	}
+	
+	public function reset():Void {
+		while (activeBullets.length > 0) {
+			kill(activeBullets[0]);
+		}
+	}
+	
 	public inline function update(delta:Float, bounds:Rectangle):Void {
 		var removeList:Array<IBullet> = [];
 		for (b in activeBullets) {
@@ -80,6 +87,10 @@ class Emitter implements IBulletEmitter
 	public function getAngleToPlayer(pos:Vector2D):Float 
 	{
 		return MathUtils.radToDeg(pos.angleTo(playerPos));
+	}
+	public function getDeltaAngleToPlayer(pos:Vector2D):Float {
+		var a = MathUtils.radToDeg(pos.angleTo(playerPos));
+		return a;
 	}
 	
 	public function kill(bullet:IBullet):Void 

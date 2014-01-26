@@ -97,6 +97,11 @@ class Runner extends Sprite
 		loopTimer.start();
 	}
 	
+	public function reset() 
+	{
+		emitter.reset();
+	}
+	
 	private function onTimerTick(e:TimerEvent):Void 
 	{
 		if (runningBarrage != null) {
