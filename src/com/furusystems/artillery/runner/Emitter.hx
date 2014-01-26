@@ -35,16 +35,17 @@ class Emitter implements IBulletEmitter
 		return bulletPool[numActive];
 	}
 	
-	public function emit(origin:Vector2D, angle:Float, speed:Float, acceleration:Float):IBullet {
+	public function emit(origin:Vector2D, angle:Float, speed:Float, acceleration:Float, delta:Float):IBullet {
 		//trace("Emit from " + origin+" to "+angleRad);
 		//trace("Emit " + angle + " " + speed + " " + acceleration);
 		var angleRad = MathUtils.degToRad(angle);
 		var b = nextBullet;
+		b.speed = speed;
 		b.pos.copyFrom(origin);
 		b.angle = angle;
-		b.velocity.setTo(Math.cos(angleRad) * speed, Math.sin(angleRad) * speed);
 		b.acceleration = acceleration;
 		activeBullets.push(b);
+		//updateBullet(b, delta);
 		//trace("Emit: " + b.id);
 		return b;
 	}

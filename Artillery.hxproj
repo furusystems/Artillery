@@ -9,7 +9,7 @@
     <movie width="1000" />
     <movie height="600" />
     <movie version="11" />
-    <movie minorVersion="2" />
+    <movie minorVersion="9" />
     <movie platform="Flash Player" />
     <movie background="#FFFFFF" />
   </output>
@@ -21,7 +21,7 @@
   <build>
     <option directives="" />
     <option flashStrict="False" />
-    <option noInlineOnDebug="False" />
+    <option noInlineOnDebug="True" />
     <option mainClass="com.furusystems.artillery.Main" />
     <option enabledebug="True" />
     <option additional="" />

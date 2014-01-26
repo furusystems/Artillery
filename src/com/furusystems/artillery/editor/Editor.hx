@@ -4,6 +4,8 @@ import com.furusystems.artillery.runner.Runner;
 import com.furusystems.barrage.Barrage;
 import com.furusystems.barrage.parser.ParseError;
 import com.furusystems.fl.gui.Button;
+import com.furusystems.fl.gui.compound.Dropdown;
+import com.furusystems.fl.gui.HBox;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -43,10 +45,12 @@ class Editor extends Sprite
 		error = new TextFormat("_typewriter", 12, 0xFF2222);
 		normal = new TextFormat("_typewriter", 12, 0xEEEEEE);
 		
+		
 		graphics.beginFill(0x333333);
 		graphics.drawRect(0, 0, 500, 500);
 		inputField = new TextField();
-		inputField.width = inputField.height = 500;
+		inputField.width = inputField.height = 500-25;
+		inputField.y = 25;
 		inputField.defaultTextFormat = new TextFormat("_typewriter", 12, 0xEEEEEE);
 		inputField.wordWrap = false;
 		inputField.multiline = true;
@@ -57,21 +61,47 @@ class Editor extends Sprite
 		addChild(inputField);
 		
 		if(Reflect.hasField(storage.data,"brg")){
-			inputField.text = cleanScript(storage.data.brg);
+			load(storage.data.brg);
 		}else {
-			inputField.text = Macros.getFileContent("D:/github/Barrage/test.brg");
+			//load(Macros.getFileContent("D:/github/Barrage/examples/dev.brg"));
 		}
 		
 		
-		runButton = new Button("Run", 80, 20);
-		addChild(runButton).x = 500 - 90;
-		addChild(runButton).y = 500 - 40;
-		runButton.onPress.add(onRunButton);
 		
-		clearButton = new Button("Reset", 80, 20);
-		addChild(clearButton).x = 500 - 90 - runButton.width;
-		addChild(clearButton).y = 500 - 40;
-		clearButton.onPress.add(onClearButton);
+		var topRow:HBox = new HBox();
+		addChild(topRow);
+		topRow.x = topRow.y = 3;
+		
+		
+		var presetDropdown:Dropdown = new Dropdown(80, 20, "Presets");
+		topRow.add(presetDropdown);
+		presetDropdown.addItem("Swarm");
+		presetDropdown.addItem("Inchworm");
+		presetDropdown.addItem("Waveburst");
+		presetDropdown.onSelection.add(onPresetSelect);
+		
+		runButton = new Button("Run", 80, 20);
+		runButton.onPress.add(onRunButton);
+		topRow.add(runButton);
+		
+	}
+	
+	function load(str:String) {
+		inputField.text = cleanScript(str);
+	}
+	
+	function onPresetSelect(key:String) 
+	{
+		runner.logLine("Preset select: " + key);
+		switch(key.toLowerCase()) {
+			case "swarm":
+				load(Macros.getFileContent("D:/github/Barrage/examples/swarm.brg"));
+			case "inchworm":
+				load(Macros.getFileContent("D:/github/Barrage/examples/inchworm.brg"));
+			case "waveburst":
+				load(Macros.getFileContent("D:/github/Barrage/examples/waveburst.brg"));
+		}
+		
 	}
 	
 	private function onClearButton(b) {
@@ -79,7 +109,7 @@ class Editor extends Sprite
 	}
 	
 	public function cleanScript(str:String):String {
-		return str.trim();
+		return str.split("\r").join("\n").split("\n\n").join("\n").trim();
 	}
 	
 	private function onKeyDown(e:KeyboardEvent):Void 
@@ -100,13 +130,16 @@ class Editor extends Sprite
 		try {
 			inputField.setTextFormat(normal);
 			var brg = Barrage.fromString(inputField.text);
+			runner.reset();
 			runner.setBarrage(brg);
 			storage.data.brg = inputField.text;
 			runner.logLine("Build complete");
 		}catch (e:ParseError) {
 			runner.setBarrage(null);
 			runner.logLine(e + "");
-			highlightLine(e.lineNo);
+			highlightLine(e.lineNo+1);
+		}catch (d:Dynamic) {
+			runner.logLine("Could not parse");
 		}
 		
 	}

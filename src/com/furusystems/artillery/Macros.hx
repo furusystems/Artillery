@@ -9,7 +9,7 @@ import haxe.macro.Expr;
 class Macros
 {
 	macro public static function getFileContent( fileName : Expr ) {
-		Context.registerModuleDependency("com.furusystems.artillery.Macros", "D:/github/Barrage/test.brg");
+		Context.registerModuleDependency("com.furusystems.artillery.Macros", "D:/github/Barrage/examples/dev.brg");
         var fileStr = null;
         switch( fileName.expr ) {
         case EConst(c):

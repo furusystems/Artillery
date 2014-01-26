@@ -42,10 +42,10 @@ class Runner extends Sprite
 		
 		tabChildren = tabEnabled = false;
 		bounds = new Rectangle(0, 0, 500, 500);
-		emitter = new Emitter();
+		emitter = new Emitter(1000);
 		emitter.pos.x = 250;
 		emitter.pos.y = 250;
-		emitter.playerPos = playerPos = new Vector2D();
+		emitter.playerPos = playerPos = new Vector2D(50, 50);
 		renderer = new Renderer(cast bounds.width, cast bounds.height);
 		addChild(renderer);
 		renderer.addEventListener(MouseEvent.MOUSE_DOWN, onRendererMouseDown);
@@ -56,8 +56,8 @@ class Runner extends Sprite
 		editor = new Editor(this);
 		addChild(editor).x = 500;
 		
-		loopTimer = new Timer(5000);
-		loopTimer.addEventListener(TimerEvent.TIMER, onTimerTick);
+		loopTimer = new Timer(2000, 1);
+		loopTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerTick);
 		
 		console = new TextField();
 		addChild(console).y = 500;
@@ -71,6 +71,7 @@ class Runner extends Sprite
 		console.text = "Welcome to Artillery - Today is " + Date.now().toString();
 		
 		t = new Time();
+		t.timeStep = 16;
 	}
 	
 	
@@ -93,7 +94,14 @@ class Runner extends Sprite
 		stop();
 		if (b == null) return;
 		runningBarrage = b.run(emitter);
+		runningBarrage.onComplete.add(onBarrageComplete);
 		runningBarrage.start();
+	}
+	
+	function onBarrageComplete(b:RunningBarrage) 
+	{
+		logLine("Barrage duration: " + b.time);
+		loopTimer.reset();
 		loopTimer.start();
 	}
 	

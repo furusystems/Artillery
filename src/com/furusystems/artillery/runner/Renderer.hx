@@ -21,10 +21,10 @@ class Renderer extends Sprite
 	public function new(w:Int = 500, h:Int = 500) 
 	{
 		super();
-		bulletSprite = new BitmapData(5, 5,true,0);
+		bulletSprite = new BitmapData(8, 8,true,0);
 		var shp:Shape = new Shape();
 		shp.graphics.beginFill(0);
-		shp.graphics.drawCircle(2.5, 2.5, 2.5);
+		shp.graphics.drawCircle(4, 3, 3);
 		bulletSprite.draw(shp);
 		bmd = new BitmapData(w, h);
 		addChild(new Bitmap(bmd));
@@ -52,8 +52,8 @@ class Renderer extends Sprite
 	static var destPt:Point = new Point();
 	inline function drawBullet(b:IBullet) 
 	{
-		destPt.x = b.pos.x;
-		destPt.y = b.pos.y;
+		destPt.x = b.pos.x-4;
+		destPt.y = b.pos.y-4;
 		bmd.copyPixels(bulletSprite, bulletSprite.rect, destPt,null,null,true);
 	}
 	
