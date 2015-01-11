@@ -13,7 +13,7 @@ import flash.Lib;
 
 class Main 
 {
-	static private var runner:com.furusystems.artillery.runner.Runner;
+	static private var runner:Runner;
 	static function main() 
 	{
 		var stage = Lib.current.stage;
@@ -22,6 +22,7 @@ class Main
 		// entry point
 		runner = new Runner();
 		stage.addChild(runner);
+
 	}
 	
 }

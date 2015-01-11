@@ -121,10 +121,12 @@ class Runner extends Sprite
 	{
 		t.update();
 		if (runningBarrage == null) return;
-		runningBarrage.update(t.deltaS);
-		emitter.update(t.deltaS, bounds);
+		var delta = t.deltaS;// * (Math.sin(haxe.Timer.stamp()) + 0.5) * 0.5;
+		runningBarrage.update(delta);
+		emitter.update(delta, bounds);
 		renderer.draw(emitter);
-		stats.text = emitter.activeBullets.length + " bullets"+"\nBarrage time: "+runningBarrage.time;
+		stats.text = emitter.activeBullets.length + " bullets"
+			+"\nBarrage time: " + runningBarrage.time;
 	}
 	
 }

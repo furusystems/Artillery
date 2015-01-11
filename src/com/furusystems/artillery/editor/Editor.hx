@@ -63,7 +63,7 @@ class Editor extends Sprite
 		if(Reflect.hasField(storage.data,"brg")){
 			load(storage.data.brg);
 		}else {
-			//load(Macros.getFileContent("D:/github/Barrage/examples/dev.brg"));
+			load(Macros.getFileContent("D:/github/Barrage/examples/dev.brg"));
 		}
 		
 		
@@ -140,6 +140,7 @@ class Editor extends Sprite
 			highlightLine(e.lineNo+1);
 		}catch (d:Dynamic) {
 			runner.logLine("Could not parse");
+			runner.logLine(""+d);
 		}
 		
 	}

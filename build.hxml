@@ -1,0 +1,9 @@
+-lib barrage
+-lib hxcomp
+-lib actuate
+-lib hugs
+-cp src
+-swf bin/Artillery.swf
+-swf-header 1000:600:60:FFFFFF
+-swf-version 11.9
+-main com.furusystems.artillery.Main
